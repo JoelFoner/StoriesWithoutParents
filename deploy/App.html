@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CustomGrid</title>
+
+    <script type="text/javascript" src="/apps/2.0rc1/sdk.js"></script>
+
+    <script type="text/javascript">
+        Rally.onReady(function () {
+                Ext.define("CustomApp",{extend:"Rally.app.App",componentCls:"app",launch:function(){var myFilter,currentProject=this.getContext().getProject().Name,parentFilter=Ext.create("Rally.data.QueryFilter",{property:"Parent",operator:"=",value:"null"}),projectFilter=Ext.create("Rally.data.QueryFilter",{property:"Project.Name",operator:"=",value:currentProject});myFilter=parentFilter.and(projectFilter);var timeboxScope=this.getContext().getTimeboxScope();timeboxScope&&(console.log("Timebox query: ",timeboxScope.getQueryFilter()),myFilter=myFilter.and(timeboxScope.getQueryFilter())),Rally.data.ModelFactory.getModel({type:"UserStory",success:function(model){this.grid=this.add({xtype:"rallygrid",model:model,columnCfgs:["FormattedID","Name","Owner","ScheduleState"],storeConfig:{filters:[myFilter]}})},scope:this})},onTimeboxScopeChange:function(newTimeboxScope){this.callParent(arguments),console.log("Timebox Changed called");var parentFilter=Ext.create("Rally.data.QueryFilter",{property:"Parent",operator:"=",value:"null"}),newFilter=parentFilter.and(newTimeboxScope.getQueryFilter()),store=this.grid.getStore();store.clearFilter(!0),store.filter(newFilter)}});
+
+            Rally.launchApp('CustomApp', {
+                name:"CustomGrid",
+	            parentRepos:""
+            });
+
+        });
+    </script>
+
+
+    <style type="text/css">
+        .app {
+     /* Add app styles here */
+}
+
+    </style>
+</head>
+<body></body>
+</html>
